@@ -1,25 +1,27 @@
+// Bootstraps the application and loads configuration, logging, and DI container.
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Registers controller support so API endpoints can be invoked.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+// Enables API endpoint discovery (useful for tools even without Swagger).
+builder.Services.AddEndpointsApiExplorer();
+
+// Builds the middleware pipeline and final application object.
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure middleware for development diagnostics.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // Provides detailed error pages during development.
+    app.UseDeveloperExceptionPage();
 }
 
+// Redirects all HTTP traffic to HTTPS for secure communication.
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
+// Maps controller-based API routes to the request pipeline.
 app.MapControllers();
 
-app.Run();
+// Starts the web application and begins listening for requests.
+await app.RunAsync();
